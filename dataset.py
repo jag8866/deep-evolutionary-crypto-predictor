@@ -1,3 +1,7 @@
+'''
+Contains tools for pulling data from exchanges as well as formatting and processing 
+the data for training.
+'''
 from pandas import *
 import matplotlib.pyplot as plt
 import numpy
@@ -30,11 +34,11 @@ def ema(data, window):
         current_ema = (c * value) + ((1 - c) * current_ema)
     return current_ema
 
-'''
-Creates a basic dataset - takes in data and organizes it into windows (X) and
-the new values look_ahead steps ahead of the last spot in the window (Y)
-'''
 def create_dataset(dataset, look_back=1, look_ahead=1):
+	'''
+	Creates a basic dataset - takes in data and organizes it into windows (X) and
+	the new values look_ahead steps ahead of the last spot in the window (Y)
+	'''
 	dataX, dataY = [], []
 	for i in range(len(dataset)-look_back-look_ahead):
 		a = dataset[i:(i+look_back), 0]
@@ -52,10 +56,10 @@ def create_dataset(dataset, look_back=1, look_ahead=1):
 	dataX = np.expand_dims(dataX, axis=2)
 	return numpy.array(dataX), numpy.array(dataY)
 
-'''
-Advanced version of dataset that includes exponential moving averages
-'''
 def create_advanced_dataset(dataset, look_back=1, look_ahead=1):
+	'''
+	Advanced version of dataset that includes exponential moving averages
+	'''
 	dataX, dataY = [], []
 	for i in range(160, len(dataset)-look_back-look_ahead):
 		a = dataset[i:(i+look_back), 0]
@@ -103,11 +107,11 @@ def create_advanced_dataset(dataset, look_back=1, look_ahead=1):
 		dataY.append(numpy.tanh(lookahead_pcntchange))
 	return numpy.array(dataX), numpy.array(dataY)
 
-'''
-Far superior dataset function. Pulls data directly from binance (by default). Can have as many coins as you want;
-the last coin in symbols will be used as the target (the one we are trying to predict).
-'''
 def create_exchange_multiset(look_back=1, look_ahead=1, exchange=ccxt.binance(), symbols=['BTC/USDT', 'ETH/USDT'], period = '12h', trainsplit = .75):
+	'''
+	Far superior dataset function. Pulls data directly from binance (by default). Can have as many coins as you want;
+	the last coin in symbols will be used as the target (the one we are trying to predict).
+	'''
 	if look_back == 0: raise Exception("look_back not set")
 	exchange.load_markets()
 	price_history = []
